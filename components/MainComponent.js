@@ -6,12 +6,18 @@ import Contact from './ContactComponent';
 
 import DishDetail from './DishDetailComponent';
 import Home from './HomeComponent';
-import {Platform,View} from 'react-native';
-import {createStackNavigator,createAppContainer, createDrawerNavigator} from 'react-navigation';
+import {Platform,View,Image,StyleSheet,ScrollView,Text} from 'react-native';
+import {createStackNavigator,createAppContainer, createDrawerNavigator,DrawerItems,SafeAreaView} from 'react-navigation';
+import {Icon} from 'react-native-elements';
 
 
 const menuNavigator=createStackNavigator({
-    Menu:{screen:Menu},
+    Menu:{screen:Menu,navigationOptions:
+        ({navigation})=>({
+            headerLeft:<Icon name="menu" size={24} color='white'
+                            onPress={()=>navigation.toggleDrawer()}/>
+        })
+    },
     DishDetail:{screen:DishDetail}
 },
 {
@@ -32,18 +38,21 @@ const MenuNavigator = createAppContainer(menuNavigator);
 
 
 const homeNavigator=createStackNavigator({
-    Home:{screen:Home}
+    Home:{screen:Home,}
 },
 {
-    defaultNavigationOptions:{
+    defaultNavigationOptions:({navigation})=>({
         headerStyle:{
             backgroundColor:'#512DA8'
         },
         headerTintColor:'#fff',
         headerTitleStyle:{
             color:'#fff'
-        }
-    }
+        },
+        headerLeft:<Icon name="menu" size={24} color='white' 
+            onPress={()=>navigation.toggleDrawer()}/>
+
+    })
 
 });
 
@@ -53,15 +62,18 @@ const aboutNavigator=createStackNavigator({
     About:{screen:About}
 },
 {
-    defaultNavigationOptions:{
+    defaultNavigationOptions:({navigation})=>({
         headerStyle:{
             backgroundColor:'#512DA8'
         },
         headerTintColor:'#fff',
         headerTitleStyle:{
             color:'#fff'
-        }
-    }
+        },
+        headerLeft:<Icon name="menu" size={24} color='white' 
+            onPress={()=>navigation.toggleDrawer()}/>
+
+    })
 
 });
 
@@ -71,54 +83,110 @@ const contactNavigator=createStackNavigator({
     Contact:{screen:Contact}
 },
 {
-    defaultNavigationOptions:{
+    defaultNavigationOptions:({navigation})=>({
         headerStyle:{
             backgroundColor:'#512DA8'
         },
         headerTintColor:'#fff',
         headerTitleStyle:{
             color:'#fff'
-        }
-    }
+        },
+        headerLeft:<Icon name="menu" size={24} color='white' 
+            onPress={()=>navigation.toggleDrawer()}/>
+
+    })
 
 });
 
 const ContactNavigator = createAppContainer(contactNavigator);
 
 
+const CustomDrawContentComponent=(props)=>{
+    return(
+    <ScrollView>
+        <SafeAreaView style={styles.container}
+            forceInset={{top:'always',horizontal:'never'}}>
+            <View style={styles.drawerHeader}>
+                <View style={{flex:1}}>
+                    <Image source={require('./images/logo.png')}
+                        style={styles.drawerImage}/>
+                </View>
+                <View style={{flex:2}}>
+                    <Text style={styles.drawerHeaderText}>Ristorante Confusion</Text>
+                </View>
+            </View>
+            <DrawerItems {...props}/>
+
+        </SafeAreaView>
+    </ScrollView>);
+}
+
 const mainNavigator=createDrawerNavigator({
     Home:{
         screen:HomeNavigator,
         navigationOptions:{
             title:'Home',
-            drawerLabel:'Home'
+            drawerLabel:'Home',
+            drawerIcon:({tintColor})=>(
+                <Icon 
+                    name='home'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
+                />
+            )
         }
     },
     About:{
         screen:AboutNavigator,
         navigationOptions:{
             title:'About Us',
-            drawerLabel:'About Us'
+            drawerLabel:'About Us',
+            drawerIcon:({tintColor})=>(
+                <Icon 
+                    name='info-circle'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
+                />
+            )
         }
     },
     Menu:{
         screen:MenuNavigator,
         navigationOptions:{
             title:'Menu',
-            drawerLabel:'Menu'
+            drawerLabel:'Menu',
+            drawerIcon:({tintColor})=>(
+                <Icon 
+                    name='list'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
+                />
+            )
         }
     },
     Contact:{
         screen:ContactNavigator,
         navigationOptions:{
             title:'Contact Us',
-            drawerLabel:'Contact Us'
+            drawerLabel:'Contact Us',
+            drawerIcon:({tintColor})=>(
+                <Icon 
+                    name='address-card'
+                    type='font-awesome'
+                    size={22}
+                    color={tintColor}
+                />
+            )
         }
     }
 
 },
 {
-    drawerBackgroundColor:'#D1C4E9'
+    drawerBackgroundColor:'#D1C4E9',
+    contentComponent:CustomDrawContentComponent
 });
 
 const MainNavigator = createAppContainer(mainNavigator);
@@ -141,5 +209,29 @@ class Main extends Component
         );
     }
 }
+
+const styles=StyleSheet.create({
+    container: {
+        flex: 1,
+      },
+      drawerHeader: {
+        backgroundColor: '#512DA8',
+        height: 140,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row'
+      },
+      drawerHeaderText: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold'
+      },
+      drawerImage: {
+        margin: 10,
+        width: 80,
+        height: 60
+      }
+})
 
 export default Main;
