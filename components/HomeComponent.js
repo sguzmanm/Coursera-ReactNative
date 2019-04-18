@@ -4,6 +4,8 @@ import { ScrollView,View,Text } from 'react-native';
 import {Card} from 'react-native-elements';
 import {baseUrl} from '../shared/baseUrl';
 import {connect} from 'react-redux';
+import { Loading } from './LoadingComponent';
+
 
 
 const mapStateToProps=state=>{
@@ -18,8 +20,21 @@ const mapStateToProps=state=>{
 function RenderItem(props)
 {
     const item=props.item;
-
-    if(item!=null)
+    if(props.isLoading)
+    {
+        return(
+                    <Loading/>
+        );
+    }
+    else if(props.errMess)
+    {
+        return(
+            <View>
+                    <Text>{props.errMess}</Text>
+            </View>
+        );
+    }
+    else if(item!=null)
     {
         return(
             <Card
@@ -52,9 +67,9 @@ class Home extends Component
     {
         return(
         <ScrollView>
-            <RenderItem item={this.props.dishes.dishes.filter((dish)=>dish.featured===true)[0]}></RenderItem>
-            <RenderItem item={this.props.promotions.promotions.filter((promo)=>promo.featured===true)[0]}></RenderItem>
-            <RenderItem item={this.props.leaders.leaders.filter((lead)=>lead.featured===true)[0]}></RenderItem>
+            <RenderItem item={this.props.dishes.dishes.filter((dish)=>dish.featured===true)[0]} isLoading={this.props.dishes.isLoading} errMess={this.props.dishes.errMess}></RenderItem>
+            <RenderItem item={this.props.promotions.promotions.filter((promo)=>promo.featured===true)[0]} isLoading={this.props.promotions.isLoading} errMess={this.props.promotions.errMess}></RenderItem>
+            <RenderItem item={this.props.leaders.leaders.filter((lead)=>lead.featured===true)[0]} isLoading={this.props.leaders.isLoading} errMess={this.props.leaders.errMess}></RenderItem>
 
         </ScrollView>
 
