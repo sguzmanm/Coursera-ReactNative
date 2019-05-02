@@ -8,10 +8,12 @@ import DishDetail from './DishDetailComponent';
 import Home from './HomeComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoriteComponent';
+import Login from './LoginComponent';
 
 import {Platform,View,Image,StyleSheet,ScrollView,Text} from 'react-native';
 import {createStackNavigator,createAppContainer, createDrawerNavigator,DrawerItems,SafeAreaView} from 'react-navigation';
 import {Icon} from 'react-native-elements';
+
 
 import {dispatch} from 'redux';
 
@@ -160,6 +162,30 @@ const favoritesNavigator=createStackNavigator({
 
 const FavoritesNavigator = createAppContainer(favoritesNavigator);
 
+
+
+const loginNavigator=createStackNavigator({
+    Login:{screen:Login,}
+},
+{
+    defaultNavigationOptions:({navigation})=>({
+        headerStyle:{
+            backgroundColor:'#512DA8'
+        },
+        headerTintColor:'#fff',
+        headerTitleStyle:{
+            color:'#fff'
+        },
+        title:'Login',
+        headerLeft:<Icon name="menu" size={24} color='white' 
+            onPress={()=>navigation.toggleDrawer()}/>
+
+    })
+
+});
+
+const LoginNavigator = createAppContainer(loginNavigator);
+
 const CustomDrawContentComponent=(props)=>{
     return(
     <ScrollView>
@@ -181,6 +207,21 @@ const CustomDrawContentComponent=(props)=>{
 }
 
 const mainNavigator=createDrawerNavigator({
+    Login:{
+        screen:LoginNavigator,
+        navigationOptions:{
+            title:'Login',
+            drawerLabel:'Login',
+            drawerIcon:({tintColor})=>(
+                <Icon 
+                    name='sign-in'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
+                />
+            )
+        }
+    },
     Home:{
         screen:HomeNavigator,
         navigationOptions:{
@@ -274,6 +315,7 @@ const mainNavigator=createDrawerNavigator({
 
 },
 {
+    initialRouteName:'Home',
     drawerBackgroundColor:'#D1C4E9',
     contentComponent:CustomDrawContentComponent
 });
