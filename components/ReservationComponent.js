@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import {Text,View,ScrollView,StyleSheet,Picker,Switch,Button, Modal,Alert} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable';
-import {Permissions,Notifications} from 'expo';
+import {Permissions,Notifications,Calendar} from 'expo';
 
 class Reservation extends Component{
 
@@ -21,6 +21,36 @@ class Reservation extends Component{
         title:'Reserve table'
     }
 
+    obtainCalendarPermission=async ()=>
+    {
+        let permission=await Permissions.getAsync(Permissions.CALENDAR);
+        console.log("STATUS GET "+permission.status);
+        if(permission.status!=='granted')
+        {
+            permission=await Permissions.askAsync(Permissions.CALENDAR);
+        }
+        return permission;
+    }
+
+    addReservationToCalendar= async (date)=>{
+        let calendarPermission=await this.obtainCalendarPermission();
+        console.log("CALENDAR PERMISSION "+calendarPermission.status);
+        if(calendarPermission.status==='granted')
+        {
+            let event=await Calendar.createEventAsync(Calendar.DEFAULT,{
+                title:'Con Fusion Table Reservation',
+                startDate:new Date(Date.parse(date)),
+                endDate:new Date(Date.parse(date)+2*60*60*1000),
+                timeZone:'Asia/Hong Kong',
+                location:'121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+            });
+    
+            console.log("The event is "+event);
+            this.resetForm();
+        }
+
+    }
+
     handleReservation(){
         console.log(JSON.stringify(this.state));
         var msg= 'Number of Guests: '+this.state.guests+'\n'+
@@ -37,7 +67,7 @@ class Reservation extends Component{
                 text:'OK',
                 onPress:()=>{
                     this.presentLocalNotification(this.state.date);
-                    this.resetForm()
+                    this.addReservationToCalendar(this.state.date);
                 },
                 style:' cancel'
             }

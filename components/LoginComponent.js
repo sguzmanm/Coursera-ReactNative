@@ -144,7 +144,8 @@ class RegisterTab extends Component {
     }
 
     processImage = async (imageUri) => {
-        let processedImage = await ImageManipulator.manipulate(
+        console.log("URI "+imageUri);
+        let processedImage = await ImageManipulator.manipulateAsync(
             imageUri, 
             [
                 {resize: {width: 400}}
@@ -153,6 +154,26 @@ class RegisterTab extends Component {
         );
         console.log(processedImage);
         this.setState({imageUrl: processedImage.uri });
+    }
+
+    getImageFromGallery = async()=>{
+        const cameraRollPermissions = await this.getPermission(Permissions.CAMERA_ROLL);
+        console.log(cameraRollPermissions.status);
+        if(cameraRollPermissions.status==='granted')
+        {
+            console.log('granted');
+            let image=await ImagePicker.launchImageLibraryAsync({
+                mediaTypes:ImagePicker.MediaTypeOptions.Images,
+                allowsEditing:true,
+                aspect:[4,3]
+            });
+            console.log(image.cancelled);
+            if(!image.cancelled)
+            {
+                this.processImage(image.uri);
+            }
+        }
+        
     }
 
     getImageFromCamera = async () => {
@@ -169,7 +190,8 @@ class RegisterTab extends Component {
             console.log(image.cancelled);
             if(!image.cancelled)
             {
-                this.processImage(imageUri);
+                console.log(image);
+                this.processImage(image.uri);
             }
         }
 
@@ -207,6 +229,10 @@ class RegisterTab extends Component {
                     <Button
                         title="Camera"
                         onPress={this.getImageFromCamera}
+                        />
+                    <Button
+                        title="Gallery"
+                        onPress={this.getImageFromGallery}
                         />
                 </View>
                 <Input
@@ -281,6 +307,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         flexDirection: 'row',
+        justifyContent:'space-around',
         margin: 20
     },
     image: {
